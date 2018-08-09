@@ -18,6 +18,7 @@ export default {
 
 <style lang="scss" scoped>
 .menu{
+  margin: 35px 0 50px 0;
   .tabs{
     width: 100%;
     height: 50px;
@@ -36,7 +37,8 @@ export default {
       background: linear-gradient(90deg, rgba(146, 200, 225,1) 20.5625%,rgba(177, 218, 237,1) 80.5625%);
       a{
         font-family: 'Beau Sans Pro Light', sans-serif;
-        font-size: 18px;
+        font-size: 16px;
+        text-transform: uppercase;
         color: #4b4b4b;
         margin: auto 0;
         span{

@@ -46,6 +46,7 @@ export default {
       border: none;
       background-color: #17709a;
       color: #ffffff;
+      cursor: pointer;
     }
   }
 }

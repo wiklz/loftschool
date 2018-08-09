@@ -1,11 +1,48 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import axios from 'axios'
+import data from './../data/goods'
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    msg: 'Hello world'
+    msg: 'Hello world',
+    goods: []
+  },
+  getters: {
+    getGoods (state) {
+      return state.goods
+    }
+  },
+  actions: {
+    getGoods ({ commit }) {
+      class Good {
+        constructor (description = '', price = 0, img = '') {
+          this.name = description
+          this.price = price
+          this.img = img
+          this.count = 1
+          Good.index += 1
+        }
+      }
+      Good.index = 0
+      let items = []
+      for (const index in data.goods) {
+        items[index] = new Good(data.goods[index].name, data.goods[index].price, data.goods[index].img)
+        items[index].index = Good.index
+      }
+      commit('SET_GOODS', items)
+    },
+    changeCount ({ commit, state }, input) {
+      commit('CHANGE_COUNT', input)
+    }
+  },
+  mutations: {
+    SET_GOODS (state, goods) {
+      state.goods = goods
+    },
+    CHANGE_COUNT (state, input) {
+      console.log(input.item)
+    }
   }
 })

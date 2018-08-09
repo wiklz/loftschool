@@ -2,20 +2,24 @@
   <div id="app">
     <TopSearch/>
     <Menu/>
-    <!--<Breadcrumbs/>-->
+    <Breadcrumbs/>
     <Page/>
   </div>
 </template>
 
 <script>
 import TopSearch from './components/TopSearch'
+import Breadcrumbs from './components/Breadcrumbs'
 import Menu from './components/Menu'
 import Page from './components/Page'
 
 export default {
   name: 'App',
   components: {
-    Page, Menu, TopSearch
+    Page, Menu, Breadcrumbs, TopSearch
+  },
+  beforeCreate () {
+    this.$store.dispatch('getGoods')
   }
 }
 </script>
@@ -50,7 +54,8 @@ export default {
     src: url(./assets/fonts/BeauSansPro/PFBeauSansPro-XThin.ttf);
   }
 #app {
-  font-family: Arial, sans-serif;
+  font-family: 'Beau Sans Pro Light', sans-serif;
+  font-size: 14px;
   margin: 0;
   padding: 0 85px;
 }
