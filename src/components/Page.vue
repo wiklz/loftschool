@@ -19,8 +19,8 @@
           <td>{{good.name}}</td>
           <td class="calc" @click="good.modal = !good.modal">
             {{good.price}} <span>&#8381;</span> <span v-show="good.count > 1">x</span> <input type="text" v-model="good.count" disabled> <span v-show="good.count > 1">=</span> <span>{{good.price * good.count}}</span> <span>&#8381;</span>
+            <div class="modal-window" v-if="good.modal"><h1>{{good.index}}</h1></div>
           </td>
-          <div class="modal-window" v-if="good.modal"><h1>{{good.index}}</h1></div>
         </tr>
       </table>
     </div>
