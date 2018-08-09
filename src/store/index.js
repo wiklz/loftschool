@@ -34,11 +34,23 @@ export const store = new Vuex.Store({
         items[index].index = Good.index
       }
       commit('SET_GOODS', items)
+    },
+    closeModal ({ commit, state }) {
+      for (const good of state.goods) {
+        if (good.modal === true) {
+          commit('CLOSE_MODAL')
+        }
+      }
     }
   },
   mutations: {
     SET_GOODS (state, goods) {
       state.goods = goods
+    },
+    CLOSE_MODAL (state) {
+      for (const good of state.goods) {
+        good.modal = false
+      }
     }
   }
 })
