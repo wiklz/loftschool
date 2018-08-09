@@ -23,6 +23,7 @@ export const store = new Vuex.Store({
           this.price = price
           this.img = img
           this.count = 1
+          this.modal = false
           Good.index += 1
         }
       }
