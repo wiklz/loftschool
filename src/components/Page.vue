@@ -17,7 +17,7 @@
           </td>
           <td class="images"><img :src="good.img" alt=""></td>
           <td>{{good.name}}</td>
-          <td class="calc">{{good.price}} <span>&#8381;</span> <span>x</span> <input type="number" v-model="good.count" @change="changeCount($event.target, good)"> <span>=</span> <span>{{good.price * good.count}}</span> <span>&#8381;</span></td>
+          <td class="calc">{{good.price}} <span>&#8381;</span> <span v-show="good.count > 1">x</span> <input type="text" v-model="good.count" disabled> <span v-show="good.count > 1">=</span> <span>{{good.price * good.count}}</span> <span>&#8381;</span></td>
         </tr>
       </table>
     </div>
@@ -35,11 +35,6 @@ export default {
   computed: {
     goods () {
       return this.$store.getters.getGoods
-    }
-  },
-  methods: {
-    changeCount (target, item) {
-      this.$store.dispatch('changeCount', { target: target, item: item })
     }
   }
 }
@@ -92,6 +87,9 @@ export default {
               text-align: center;
               border-radius: 4px;
               border: 1px solid lightgrey;
+              background-color: #ffffff;
+              color: #212529;
+              cursor: pointer;
             }
           }
           &:not(:first-child){

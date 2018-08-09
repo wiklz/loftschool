@@ -7,7 +7,8 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state: {
     msg: 'Hello world',
-    goods: []
+    goods: [],
+    total: 0
   },
   getters: {
     getGoods (state) {
@@ -32,17 +33,11 @@ export const store = new Vuex.Store({
         items[index].index = Good.index
       }
       commit('SET_GOODS', items)
-    },
-    changeCount ({ commit, state }, input) {
-      commit('CHANGE_COUNT', input)
     }
   },
   mutations: {
     SET_GOODS (state, goods) {
       state.goods = goods
-    },
-    CHANGE_COUNT (state, input) {
-      console.log(input.item)
     }
   }
 })
