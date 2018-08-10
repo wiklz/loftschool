@@ -3,24 +3,38 @@
     <h1 class="title">{{title}}</h1>
     <div class="content">
       <div class="content-head">
-        <span>Выделено 45</span>
-        <span>Удалить отмеченные</span>
+        <span>Выделено <strong id="checkedItems">0</strong></span>
+        <span @click="deleteChecked"><button class="delete-btn"></button> Удалить отмеченные</span>
       </div>
       <table class="w-100">
         <tr v-for="good in goods" :key="good.index">
           <td class="checkbox">
             <label class="box-container">
-              <input type="checkbox">
+              <input @click="check($event.target, good)" type="checkbox" class="checkbox-input">
               <span class="checkmark"></span>
             </label>
-            {{good.index}}
+            {{good.index + 1}}
           </td>
           <td class="images"><img :src="good.img" alt=""></td>
           <td>{{good.name}}</td>
-          <td class="calc" @click="good.modal = !good.modal">
-            <span>{{good.price}}</span> <span>&#8381;</span> <span v-show="good.count > 1">x</span> <input type="text" v-model="good.count" disabled> <span v-show="good.count > 1">=</span> <span>{{good.price * good.count}}</span> <span>&#8381;</span>
-            <div class="modal-wrapper">
-              <div class="modal-window" v-if="good.modal"><h1>{{good.index}}</h1></div>
+          <td class="calc">
+            <div class="calc-wrapper" @click="good.modal = !good.modal">
+              <span>{{good.price}}</span> <span>&#8381;</span> <span v-show="good.count > 1">x</span> <input type="text" v-model="good.count" disabled> <span v-show="good.count > 1">=</span> <span>{{good.price * good.count}}</span> <span>&#8381;</span>
+            </div>
+            <div class="modal-wrapper" v-if="good.modal" @click.self="good.modal = false"></div>
+            <div class="modal-window" v-if="good.modal">
+              <h6>Изменить количество</h6>
+              <div class="counter">
+                <span>{{good.price * good.count}} &#8381;</span>
+                <button @click="counterReduce(good)">-</button>
+                <input id="counter" type="text" :value="good.count" @change="calculateFinalPrice($event.target.value, good)">
+                <button @click="counterAdd(good)">+</button>
+                <span id="finalPrice">{{good.price * good.count}}</span><span>&#8381;</span>
+              </div>
+              <div class="btns">
+                <button @click="saveCount(good)">Сохранить</button>
+                <button @click="good.modal = false">Отменить</button>
+              </div>
             </div>
           </td>
         </tr>
@@ -35,7 +49,8 @@ export default {
   name: 'Page',
   data () {
     return {
-      title: 'Корзина'
+      title: 'Корзина',
+      checkedItems: []
     }
   },
   computed: {
@@ -46,6 +61,25 @@ export default {
   methods: {
     closeModal () {
       this.$store.dispatch('closeModal')
+    },
+    counterReduce (good) {
+      this.$store.dispatch('counterReduce', { value: document.querySelector('#counter').value, good: good })
+    },
+    counterAdd (good) {
+      this.$store.dispatch('counterAdd', { value: document.querySelector('#counter').value, good: good })
+    },
+    calculateFinalPrice (value, good) {
+      document.querySelector('#finalPrice').innerText = good.price * value
+    },
+    saveCount (good) {
+      this.$store.dispatch('saveCount', good)
+      this.$store.dispatch('closeModal')
+    },
+    check (target, good) {
+      this.$store.dispatch('check', { target: target, good: good })
+    },
+    deleteChecked () {
+      this.$store.dispatch('delete')
     }
   }
 }
@@ -69,6 +103,19 @@ export default {
       justify-content: space-between;
       span{
         margin: auto 0;
+        .delete-btn{
+          height: 20px;
+          width: 20px;
+          border: none;
+          border-radius: 4px;
+          display: inline-block;
+          vertical-align: middle;
+          margin: auto 5px;
+          background: url("./../assets/del.png") no-repeat center center;
+        }
+        &:last-child{
+          cursor: pointer;
+        }
       }
     }
     table{
@@ -86,25 +133,28 @@ export default {
           &.checkbox{
             input{
             margin: auto 10px;
-          }
+            }
           }
           &.calc{
-            display: flex;
-            flex-direction: row;
-            justify-content: space-around;
-            input{
-              margin: auto 0;
-              width: 45px;
-              height: 20px;
-              text-align: center;
-              border-radius: 4px;
-              border: 1px solid lightgrey;
-              background-color: #ffffff;
-              color: #212529;
-              cursor: pointer;
-            }
-            span{
-              margin: auto 0;
+            .calc-wrapper{
+              display: flex;
+              flex-direction: row;
+              justify-content: space-around;
+              height: 100%;
+              input{
+                margin: auto 0;
+                width: 45px;
+                height: 20px;
+                text-align: center;
+                border-radius: 4px;
+                border: 1px solid lightgrey;
+                background-color: #ffffff;
+                color: #212529;
+                cursor: pointer;
+              }
+              span{
+                margin: auto 0;
+              }
             }
           }
           &:not(:first-child){
@@ -117,9 +167,74 @@ export default {
       }
     }
   }
+  .modal-wrapper{
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    z-index: 1;
+  }
   .modal-window{
     position: absolute;
+    right: 50px;
     z-index: 10;
+    width: 315px;
+    height: 135px;
+    border-radius: 4px;
+    background-color: #fff;
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    h6{
+      font-family: 'Beau Sans Pro Semi Bold', sans-serif;
+      color: #396596;
+      font-size: 15px;
+    }
+    .counter{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      input{
+        margin: auto 0;
+        width: 45px;
+        height: 20px;
+        text-align: center;
+        border-radius: 4px;
+        border: 1px solid lightgrey;
+        background-color: #ffffff;
+        color: #212529;
+        cursor: pointer;
+      }
+      button{
+        height: 20px;
+        width: 20px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        line-height: 10px;
+        text-align: center;
+        padding: 0;
+        color: #ffffff;
+        border: none;
+        background-color: #6e99b9;
+      }
+    }
+    .btns{
+      button{
+        background: none;
+        border: none;
+        font-family: 'Beau Sans Pro', sans-serif;
+        font-size: 12px;
+        text-transform: uppercase;
+        text-decoration: underline;
+        cursor: pointer;
+        &:first-child{
+          color: #376293;
+        }
+      }
+  }
   }
 }
 /*CUSTOM CHECKBOX*/

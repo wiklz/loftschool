@@ -4,6 +4,7 @@
     <Menu/>
     <Breadcrumbs/>
     <Page/>
+    <Total/>
   </div>
 </template>
 
@@ -12,11 +13,12 @@ import TopSearch from './components/TopSearch'
 import Breadcrumbs from './components/Breadcrumbs'
 import Menu from './components/Menu'
 import Page from './components/Page'
+import Total from './components/Total'
 
 export default {
   name: 'App',
   components: {
-    Page, Menu, Breadcrumbs, TopSearch
+    Page, Menu, Breadcrumbs, TopSearch, Total
   },
   beforeCreate () {
     this.$store.dispatch('getGoods')
